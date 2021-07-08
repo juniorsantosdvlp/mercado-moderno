@@ -1,4 +1,4 @@
-package br.com.kanritech.rest;
+package br.com.kanritech.market;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

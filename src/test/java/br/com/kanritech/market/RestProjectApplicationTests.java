@@ -1,4 +1,4 @@
-package br.com.kanritech.rest;
+package br.com.kanritech.market;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
