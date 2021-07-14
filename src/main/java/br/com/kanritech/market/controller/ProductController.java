@@ -48,7 +48,7 @@ public class ProductController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Product> fullUpdateProduct(@PathVariable("id") Long id, @RequestBody Product requestProduct) {
-        Product foundProduct = findProduct(id);
+        Product foundProduct = findProduct(id).getContent();
         foundProduct = requestProduct;
         foundProduct.setId(id);
         return ResponseEntity.ok(productRepository.save(foundProduct));
@@ -56,7 +56,7 @@ public class ProductController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<Product> patchUpdateProduct(@PathVariable("id") Long id, @RequestBody Product requestProduct) {
-        Product foundProduct = findProduct(id);
+        Product foundProduct = findProduct(id).getContent();
         foundProduct.setCode(Optional.ofNullable(requestProduct.getCode()).orElse(foundProduct.getCode()));
         foundProduct.setDepartment(Optional.ofNullable(requestProduct.getDepartment()).orElse(foundProduct.getDepartment()));
         foundProduct.setDescription(Optional.ofNullable(requestProduct.getDescription()).orElse(foundProduct.getDescription()));
@@ -66,7 +66,7 @@ public class ProductController {
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<Product> deleteProduct(@PathVariable("id") Long id){
-        Product product = findProduct(id);
+        Product product = findProduct(id).getContent();
         productRepository.delete(product);
         return ResponseEntity.ok().body(product);
 
