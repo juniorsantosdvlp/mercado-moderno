@@ -1,22 +1,23 @@
 package br.com.kanritech.market.model;
 
 import lombok.Data;
-import lombok.Generated;
-
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @Entity
 @Data
-@Table(name = "product")
+@Table(name = "product",schema = "market")
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private int code;
-    private String name;
-    private String department;
-    private BigDecimal sellValue;
+    @NotNull private Long code;
+
+    @NotBlank private String name;
+    @NotBlank private String department;
+    @NotNull private BigDecimal sellValue;
     private String description;
 
 }
