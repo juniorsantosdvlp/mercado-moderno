@@ -1,32 +1,38 @@
 package br.com.kanritech.market.controller;
 
+import br.com.kanritech.market.dto.ProductDTO;
 import br.com.kanritech.market.exception.ProductNotFoundException;
 import br.com.kanritech.market.model.Product;
 import br.com.kanritech.market.repository.ProductRepository;
+import br.com.kanritech.market.service.ProductService;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import org.springframework.data.domain.Pageable;
 import java.util.Optional;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping("products")
+@RequestMapping("/products")
 @CrossOrigin
 public class ProductController {
 
     @Autowired
     ProductRepository productRepository;
-
+@Autowired protected ProductService productService;
     @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
-        return new ResponseEntity<Product>(productRepository.save(product), HttpStatus.CREATED);
+    public ResponseEntity<EntityModel<Product>> createProduct(@RequestBody ProductDTO product) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(EntityModel.of(productService.insert(product),
+                linkTo(methodOn(ProductController.class).findAll()).withRel("products")));
     }
 
     @GetMapping("/{id}")
@@ -41,7 +47,7 @@ public class ProductController {
                 linkTo(methodOn(ProductController.class).findAll()).withRel("products"));
     }
 
-    @GetMapping
+    @GetMapping("/")
     public Iterable<Product> findAll() {
         return productRepository.findAll();
     }
@@ -52,6 +58,14 @@ public class ProductController {
         foundProduct = requestProduct;
         foundProduct.setId(id);
         return ResponseEntity.ok(productRepository.save(foundProduct));
+    }
+    @GetMapping("/department/{id}")
+    public Page<Product> findByDepartment (@PathVariable("id") Long id,
+                                           @RequestParam(name = "page") Optional<Integer> page,
+                                           @RequestParam(name = "size") Optional<Integer> size){
+        Pageable pageable = PageRequest.of(page.orElse(0),size.orElse(30));
+        return productService.getProductsByDepartment(id, pageable);
+
     }
 
     @PatchMapping("/{id}")
